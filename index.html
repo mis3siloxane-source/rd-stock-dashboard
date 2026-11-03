@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R&D Stock Management Dashboard</title>
+<style>
+:root{--blue:#2563eb;--navy:#172554;--bg:#f3f7fc;--text:#172033;--muted:#718096;--line:#e5ebf3}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Segoe UI,Arial,sans-serif;color:var(--text)}
+.app{display:flex;min-height:100vh}.sidebar{width:245px;background:#fff;border-right:1px solid var(--line);padding:26px 17px;position:fixed;inset:0 auto 0 0}
+.brand{display:flex;align-items:center;gap:11px;font-weight:800;font-size:18px;margin:2px 8px 35px;color:var(--navy)}
+.logo{width:39px;height:39px;border-radius:12px;background:linear-gradient(135deg,#2563eb,#38bdf8);display:grid;place-items:center;color:white;font-weight:800}
+.nav-label{font-size:10px;color:#9aa6b7;font-weight:800;letter-spacing:1.4px;margin:22px 12px 9px}
+.nav button{width:100%;border:0;background:transparent;padding:12px 13px;border-radius:10px;text-align:left;color:#64748b;font-size:14px;font-weight:600;cursor:pointer;margin:3px 0}
+.nav button.active,.nav button:hover{background:#edf4ff;color:var(--blue)}
+.main{margin-left:245px;width:calc(100% - 245px);padding:28px 34px 45px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:25px}
+h1{font-size:25px;margin:0 0 6px;color:#14213d}.sub{color:var(--muted);font-size:13px}
+.btn{border:0;border-radius:9px;padding:11px 16px;font-weight:700;cursor:pointer;background:var(--blue);color:white}
+.btn.light{background:#edf4ff;color:var(--blue);border:1px solid #d9e7ff}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:22px}
+.card{background:white;border:1px solid var(--line);border-radius:15px;padding:19px;box-shadow:0 4px 16px #1e3a5f08}
+.card-head{display:flex;justify-content:space-between;align-items:center;color:#718096;font-size:13px;font-weight:600}
+.ico{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;font-size:19px}
+.blue{background:#eaf2ff;color:#2563eb}.green{background:#e8f8ef;color:#159451}.orange{background:#fff1e7;color:#dc7628}.purple{background:#f2edff;color:#805ad5}
+.num{font-size:28px;font-weight:800;margin:13px 0 4px}.hint{font-size:12px;color:#94a3b8}
+.panel{background:white;border:1px solid var(--line);border-radius:15px;padding:20px;margin-bottom:19px;box-shadow:0 4px 16px #1e3a5f08}
+.panel-title{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:17px}
+h2{font-size:16px;margin:0}.filters{display:flex;gap:10px;flex-wrap:wrap}
+input,select{border:1px solid #dce4ef;border-radius:9px;padding:10px 12px;font:inherit;font-size:13px;background:white;outline:none}
+input:focus,select:focus{border-color:#80aaff;box-shadow:0 0 0 3px #2563eb14}
+table{width:100%;border-collapse:collapse;min-width:650px}th{text-align:left;font-size:11px;letter-spacing:.5px;color:#8491a4;background:#f8fafd;padding:13px 12px}
+td{padding:14px 12px;border-bottom:1px solid #edf1f6;font-size:13px}tr:last-child td{border-bottom:0}
+.tag{padding:5px 9px;border-radius:20px;font-size:11px;font-weight:700}.in{background:#e8f8ef;color:#16834a}.out{background:#fff1e7;color:#c96a24}
+.low{color:#d97706;font-weight:700}.table-wrap{overflow-x:auto}
+.section{display:none}.section.show{display:block}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}.field{display:flex;flex-direction:column;gap:7px}.field label{font-size:12px;font-weight:700;color:#5b687a}
+.field input,.field select{width:100%;padding:12px}
+.form-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
+.notice{background:#eff6ff;border:1px solid #dbeafe;color:#315b9d;padding:12px 14px;border-radius:10px;font-size:12px;margin-bottom:18px}
+@media(max-width:1000px){.cards{grid-template-columns:repeat(2,1fr)}.sidebar{width:205px}.main{margin-left:205px;width:calc(100% - 205px);padding:23px}}
+@media(max-width:650px){.app{display:block}.sidebar{position:relative;width:100%;height:auto;padding:14px}.brand{margin-bottom:12px}.nav{display:flex;overflow:auto}.nav-label{display:none}.nav button{white-space:nowrap;width:auto}.main{margin:0;width:100%;padding:18px}.cards{grid-template-columns:repeat(2,1fr);gap:10px}.card{padding:14px}.num{font-size:23px}.form-grid{grid-template-columns:1fr}.top{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<body>
+
+  <!-- AA NAVO LOGIN SCREEN NO CODE EKDAM UPAR MUKVO -->
+  <div id="loginScreen" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:#f4f6f9; display:flex; justify-content:center; align-items:center; z-index:999999;">
+    <div style="background:white; padding:30px; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,0.1); width:320px; text-align:center;">
+      <h3>R&D Stock Login</h3>
+      <p style="font-size:13px; color:#666; margin-bottom:20px;">Please enter Employee ID and Password.</p>
+      
+      <input type="text" id="loginId" placeholder="Enter Employee ID" style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ddd; border-radius:5px; box-sizing:border-box;">
+      
+      <input type="password" id="loginPass" placeholder="Enter Password" style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ddd; border-radius:5px; box-sizing:border-box;">
+      
+      <button onclick="checkPassword()" style="width:100%; padding:10px; background:#0066cc; color:white; border:none; border-radius:5px; cursor:pointer; font-weight:bold;">Login</button>
+      <p id="errorMsg" style="color:red; font-size:12px; margin-top:10px; display:none;">Incorrect Employee ID or Password!</p>
+    </div>
+  </div>
+
+  <!-- AHIYA THI TAMARU MAIN DASHBOARD SHURU THASE -->
+  <div id="mainDashboard" style="display:none;">
+      <!-- Tamaru aakhu junu dashboard ahiya andar rehse -->
+  </div>
+  <!-- 2. Main Dashboard Wrapper (Ahiya thi tamaru aakhu junu dashboard shuru thase) -->
+  <div id="mainDashboard" style="display:none;">
+
+    <!-- TAMARO JUNU AAKHU DASHBOARD AHIYA ANDAR REHSE (<div class="app"> thi laine baki no aakho code) -->
+    <div class="app">
+       <!-- Tamara badha sidebar, header, tables ane form ahiya j rehse -->
+    </div>
+
+  </div> <!-- Main Dashboard Div Close -->
+<div class="app">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">R&D</div><div>R&D STOCK<br><span style="font-size:11px;color:#94a3b8;font-weight:600">MANAGEMENT</span></div></div>
+  <div class="nav-label">WORKSPACE</div>
+  <nav class="nav">
+    <button class="active" data-page="dashboard">▦ &nbsp; Dashboard</button>
+    <button data-page="master">▤ &nbsp; Stock Master</button>
+    <button data-page="entry">⇅ &nbsp; Stock In / Out Entry</button>
+    <button data-page="history">◷ &nbsp; Stock History</button>
+  </nav>
+  <div class="nav-label">INFORMATION</div>
+  <div style="padding:10px 12px;color:#94a3b8;font-size:12px;line-height:1.6">Connected with Google Sheet<br>Live Data</div>
+</aside>
+<main class="main">
+  <div class="top"><div><h1 id="pageTitle">R&D Stock Dashboard</h1><div class="sub">Monitor stock levels, inward and outward material movement</div></div><button class="btn light" onclick="fetchGoogleSheetData()">↻ Refresh</button></div>
+
+  <section id="dashboard" class="section show">
+    <div class="cards">
+      <div class="card"><div class="card-head">Total Items <span class="ico blue">▤</span></div><div class="num" id="totalItems">0</div><div class="hint">Items in stock master</div></div>
+      <div class="card"><div class="card-head">Total Stock IN <span class="ico green">↓</span></div><div class="num" id="totalIn">0</div><div class="hint">Total inward quantity</div></div>
+      <div class="card"><div class="card-head">Total Stock OUT <span class="ico orange">↑</span></div><div class="num" id="totalOut">0</div><div class="hint">Total outward quantity</div></div>
+      <div class="card"><div class="card-head">Available Stock <span class="ico purple">▦</span></div><div class="num" id="available">0</div><div class="hint">Current quantity across items</div></div>
+    </div>
+    <div class="panel"><div class="panel-title"><h2>Current Stock Overview</h2><input id="dashSearch" placeholder="Search item..." oninput="renderMaster()"></div><div class="table-wrap"><table><thead><tr><th>SKU CODE</th><th>ITEM NAME</th><th>OPENING STOCK</th><th>STOCK IN</th><th>STOCK OUT</th><th>AVAILABLE</th></tr></thead><tbody id="dashRows"></tbody></table></div></div>
+    <div class="panel"><div class="panel-title"><h2>Recent Stock Movement</h2><button class="btn light" onclick="showPage('history')">View History →</button></div><div class="table-wrap"><table><thead><tr><th>DATE</th><th>SKU</th><th>TYPE</th><th>QUANTITY</th><th>RAKE NO</th></tr></thead><tbody id="recentRows"></tbody></table></div></div>
+  </section>
+
+  <section id="master" class="section">
+    <div class="panel"><div class="panel-title"><h2>Stock Master List</h2><input id="masterSearch" placeholder="Search code or item..." oninput="renderMaster()"></div><div class="table-wrap"><table><thead><tr><th>SKU CODE</th><th>ITEM NAME</th><th>OPENING STOCK</th><th>TOTAL IN</th><th>TOTAL OUT</th><th>AVAILABLE STOCK</th></tr></thead><tbody id="masterRows"></tbody></table></div></div>
+  </section>
+
+  <section id="entry" class="section">
+    <div class="notice">Live mode: entries will be saved directly into your Google Sheet (`In/Out (Manual)` tab).</div>
+    <div class="panel"><div class="panel-title"><h2>Add Stock Transaction</h2></div>
+      <form id="entryForm">
+        <div class="form-grid">
+          <div class="field"><label>Transaction Date</label><input type="date" id="date" required></div>
+          <div class="field"><label>SKU</label><select id="item" required></select></div>
+          <div class="field"><label>Transaction Type</label><select id="type"><option value="In">Stock IN</option><option value="Out">Stock OUT</option></select></div>
+          <div class="field"><label>Quantity</label><input type="number" id="qty" step="any" min="0" placeholder="Enter quantity" required></div>
+          <div class="field"><label>Rake No.</label><input id="rake" placeholder="e.g. 123"></div>
+        </div>
+        <div class="form-actions"><button type="reset" class="btn light">Clear</button><button class="btn" type="submit">＋ Save Entry</button></div>
+      </form>
+    </div>
+  </section>
+
+  <section id="history" class="section">
+    <div class="panel"><div class="panel-title"><h2>Stock Transaction History</h2><div class="filters"><input id="historySearch" placeholder="Search SKU..." oninput="renderHistory()"><select id="historyType" onchange="renderHistory()"><option value="ALL">All Transactions</option><option value="In">Stock IN</option><option value="Out">Stock OUT</option></select></div></div><div class="table-wrap"><table><thead><tr><th>TIMESTAMP</th><th>SKU</th><th>TYPE</th><th>DATE</th><th>QUANTITY</th><th>RAKE NO.</th></tr></thead><tbody id="historyRows"></tbody></table></div></div>
+  </section>
+</main>
+</div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbxTOvQrsQJqXvjGoA65TIBlwGyfKQ3YmdPMtr4KTovRpz2DcEOpNwm1EnVOLHEtrOLMVg/exec";
+
+let items = [];
+let transactions = [];
+
+function $(id) { return document.getElementById(id); }
+
+async function fetchGoogleSheetData() {
+  try {
+    const response = await fetch(API_URL);
+    if (!response.ok) throw new Error("Google Sheet connection failed");
+
+    const data = await response.json();
+
+    const masterHeaders = data.items[0].map(h => String(h).trim().toLowerCase());
+    const transactionHeaders = data.transactions[0].map(h => String(h).trim().toLowerCase());
+
+    const getValue = (row, headers, name) => {
+      let idx = headers.indexOf(name.toLowerCase());
+      return idx !== -1 ? row[idx] : "";
+    };
+
+    // Item List tab: SKU Code, Item Name, Opening Stock (if exists)
+    items = data.items.slice(1).filter(row => row.some(v => v !== "")).map(row => ({
+      code: String(getValue(row, masterHeaders, "sku code") || getValue(row, masterHeaders, "sku") || "").trim(),
+      name: String(getValue(row, masterHeaders, "item name") || "").trim(),
+      opening: Number(getValue(row, masterHeaders, "opening stock")) || 0
+    })).filter(i => i.code !== "");
+
+    // In/Out (Manual) tab: Timestamp, SKU, In/Out, Date, Quantity, Rake No.
+    transactions = data.transactions.slice(1)
+      .filter(row => row.some(v => v !== ""))
+      .map(row => ({
+        timestamp: String(getValue(row, transactionHeaders, "timestamp") || ""),
+        code: String(getValue(row, transactionHeaders, "sku") || "").trim(),
+        type: String(getValue(row, transactionHeaders, "in/out") || getValue(row, transactionHeaders, "type") || "").trim(),
+        date: String(getValue(row, transactionHeaders, "date") || ""),
+        qty: parseFloat(String(getValue(row, transactionHeaders, "quantity") || "0").replace(/[^0-9.-]+/g,"")) || 0,
+        rake: String(getValue(row, transactionHeaders, "rake no.") || getValue(row, transactionHeaders, "rake no") || "")
+      })).filter(t => t.code !== "");
+
+    renderAll();
+    console.log("Google Sheet Data Loaded Successfully");
+  } catch (error) {
+    console.error("Data Fetch Error:", error);
+    alert("Google Sheet Data Load Failed. Please check your Apps Script code and tab names.");
+  }
+}
+
+function totals(item) {
+  let ins = transactions.filter(t => t.code.toLowerCase() === item.code.toLowerCase() && t.type.toLowerCase() === 'in').reduce((a, t) => a + t.qty, item.opening);
+  let outs = transactions.filter(t => t.code.toLowerCase() === item.code.toLowerCase() && t.type.toLowerCase() === 'out').reduce((a, t) => a + t.qty, 0);
+  return { available: ins - outs, totalIn: ins - item.opening, totalOut: outs };
+}
+
+function tag(type){
+  return type.toLowerCase() === 'in' ? '<span class="tag in">Stock IN</span>' : '<span class="tag out">Stock OUT</span>';
+}
+
+function renderMaster(){
+  const q = ($('masterSearch')?.value || $('dashSearch')?.value || '').toLowerCase();
+  const list = items.filter(i => (i.name + ' ' + i.code).toLowerCase().includes(q));
+  
+  const html = list.map(i => {
+    let t = totals(i);
+    return `<tr><td><b>${i.code}</b></td><td>${i.name || '—'}</td><td>${i.opening}</td><td>${t.totalIn}</td><td>${t.totalOut}</td><td class="${t.available < 0 ? 'low' : ''}">${t.available}</td></tr>`;
+  }).join('') || '<tr><td colspan="6">No items found</td></tr>';
+  
+  if($('masterRows')) $('masterRows').innerHTML = html;
+  if($('dashRows')) $('dashRows').innerHTML = html;
+}
+
+function renderHistory(){
+ const q = ($('historySearch')?.value || '').toLowerCase();
+ const type = $('historyType')?.value || 'ALL';
+ const list = [...transactions].reverse().filter(t => t.code.toLowerCase().includes(q) && (type === 'ALL' || t.type.toLowerCase() === type.toLowerCase()));
+ 
+ if($('historyRows')) {
+   $('historyRows').innerHTML = list.map(t => `<tr><td>${t.timestamp || '—'}</td><td><b>${t.code}</b></td><td>${tag(t.type)}</td><td>${t.date}</td><td>${t.qty}</td><td>${t.rake || '—'}</td></tr>`).join('') || '<tr><td colspan="6">No transactions found</td></tr>';
+ }
+ if($('recentRows')) {
+   $('recentRows').innerHTML = [...transactions].reverse().slice(0, 5).map(t => `<tr><td>${t.date}</td><td><b>${t.code}</b></td><td>${tag(t.type)}</td><td>${t.qty}</td><td>${t.rake || '—'}</td></tr>`).join('');
+ }
+}
+
+function renderAll(){
+ let ins = transactions.filter(t => t.type.toLowerCase() === 'in').reduce((a, t) => a + t.qty, 0);
+ let outs = transactions.filter(t => t.type.toLowerCase() === 'out').reduce((a, t) => a + t.qty, 0);
+ 
+ if($('totalItems')) $('totalItems').textContent = items.length;
+ if($('totalIn')) $('totalIn').textContent = ins.toFixed(2);
+ if($('totalOut')) $('totalOut').textContent = outs.toFixed(2);
+ if($('available')) $('available').textContent = items.reduce((a, i) => a + totals(i).available, 0).toFixed(2);
+ 
+ renderMaster();
+ renderHistory();
+}
+
+function showPage(page){
+ document.querySelectorAll('.section').forEach(s => s.classList.remove('show'));
+ $(page).classList.add('show');
+ document.querySelectorAll('.nav button').forEach(b => b.classList.toggle('active', b.dataset.page === page));
+ $('pageTitle').textContent = ({dashboard:'R&D Stock Dashboard', master:'Stock Master', entry:'Stock In / Out Entry', history:'Stock History'})[page];
+ 
+ if(page === 'entry') {
+   $('item').innerHTML = items.map(i => `<option value="${i.code}">${i.code} ${i.name ? '- ' + i.name : ''}</option>`).join('');
+   $('date').value = new Date().toISOString().slice(0, 10);
+ }
+}
+
+document.querySelectorAll('.nav button').forEach(b => b.addEventListener('click', () => showPage(b.dataset.page)));
+
+$('entryForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  let code = $('item').value,
+      type = $('type').value,
+      qty = Number($('qty').value),
+      rake = $('rake').value.trim();
+      
+  let item = items.find(i => i.code === code) || { code: code, opening: 0 };
+  if(type.toLowerCase() === 'out' && qty > totals(item).available){
+    alert('Not enough available stock for this Stock OUT entry.');
+    return;
+  }
+  
+  let now = new Date();
+  let timestamp = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+  let dateVal = $('date').value.split('-').reverse().join('/'); // Format as DD/MM/YYYY if needed
+
+  let newTrans = {
+    timestamp: timestamp,
+    code: code,
+    type: type,
+    date: $('date').value,
+    qty: qty,
+    rake: rake
+  };
+
+  try {
+    await fetch(API_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+        date: newTrans.date,
+        code: newTrans.code,
+        name: "", 
+        type: newTrans.type,
+        qty: newTrans.qty,
+        remark: newTrans.rake // mapping Rake No to remark in backend script
+      })
+    });
+    
+    transactions.push(newTrans);
+    $('entryForm').reset();
+    showPage('dashboard');
+    renderAll();
+    alert('Entry saved successfully to Google Sheet!');
+  } catch (err) {
+    console.error(err);
+    alert('Failed to save entry to Google Sheet.');
+  }
+});
+
+// Initial load
+fetchGoogleSheetData();
+showPage('dashboard');
+</script>
+<!-- Tamara badha juna codes ahiya purha thay che -->
+
+  <script>
+    const allowedUsers = [
+      { id: "Siya01", pass: "Siya123" },
+      { id: "EMP02", pass: "pass222" },
+      { id: "EMP03", pass: "pass333" },
+      { id: "EMP04", pass: "pass444" }
+    ];
+
+    function checkPassword() {
+      const inputId = document.getElementById('loginId').value.trim();
+      const inputPass = document.getElementById('loginPass').value.trim();
+      
+      const isValid = allowedUsers.some(user => user.id === inputId && user.pass === inputPass);
+
+      if (isValid) {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('mainDashboard').style.display = 'block';
+      } else {
+        document.getElementById('errorMsg').style.display = 'block';
+      }
+    }
+  </script>
+
+</html>
+</body>
+</html>
